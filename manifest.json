@@ -1,0 +1,14 @@
+{
+  "name": "Ask GPT",
+  "description": "Ask anything about the current page",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "ask_gpt.html"
+  },
+  "permissions": ["activeTab", "scripting"],
+  "host_permissions": ["*://*/*"],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
