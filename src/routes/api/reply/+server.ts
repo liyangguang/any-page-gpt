@@ -7,11 +7,11 @@ const SIMILARITY_THRESHOLD = .7;
 
 export const POST = (async ({request}) => {
   const requestBody = await request.json();
-  const {query, embeddings} = requestBody;
+  const {apiKey, query, embeddings} = requestBody;
 
   try {
     console.info('==================== Embedding query');
-    const queryEmbedding = (await runEmbedding([query], true))[0].embedding;
+    const queryEmbedding = (await runEmbedding(apiKey, [query], true))[0].embedding;
     console.info('==================== Searching embedding');
     const searchResult = embeddings
       .map((entry) => ({
@@ -22,11 +22,11 @@ export const POST = (async ({request}) => {
       .sort((a, b) => a.similarity - b.similarity)
       .map((entry) => entry.content);
     const messages = constructChatMessages(searchResult, query)
-    const result = await runChatCompletion(messages);
+    const result = await runChatCompletion(apiKey, messages);
     return new Response(JSON.stringify({result}));
   } catch (e) {
     console.info('==================== Error');
     console.error(e);
-    throw error(400, e as Error);
+    throw error(400, (e as Error).message);
   }
 }) satisfies RequestHandler;

@@ -6,7 +6,7 @@ import { cleanUpHTML } from '$lib/server/dom';
 
 export const POST = (async ({request}) => {
   const requestBody = await request.json();
-  const {content, url} = requestBody;
+  const {apiKey, content, url} = requestBody;
 
   const cleanedContent = cleanUpHTML(content, url)?.textContent || ''
 
@@ -14,12 +14,12 @@ export const POST = (async ({request}) => {
     console.info('==================== Start chunking');
     const contentArray = chunkContent(cleanedContent, MODEL_MAX_TOKEN, countTokens);
     console.info('==================== Start embedding');
-    const embeddings = await runEmbedding(contentArray);
+    const embeddings = await runEmbedding(apiKey, contentArray);
     console.info('==================== Embedding done');
     return new Response(JSON.stringify(embeddings));
   } catch (e) {
     console.info('==================== Error');
     console.error(e);
-    throw error(400, e as Error);
+    throw error(400, (e as Error).message);
   }
 }) satisfies RequestHandler;

@@ -1,6 +1,5 @@
-import { LOCAL_OPENAI_API_KEY } from '$env/static/private';
 import {encode} from 'gpt-3-encoder';
-import { Configuration, OpenAIApi, type CreateChatCompletionRequest, type ChatCompletionRequestMessage } from "openai";
+import { Configuration, OpenAIApi, type ChatCompletionRequestMessage } from "openai";
 
 const EMBEDDING_SKIPPING_THRESHOLD_IN_TOKENS = 10;  // Skip embedding content that is too short (e.g. just a title)
 const COMPLETION_PROMPT_TOKEN_MAX_RATIO = .7;  // Max ratio of the prompt out of the total token limit
@@ -15,15 +14,13 @@ Answer the question only within the context. If the answer is not covered in the
 
 export const MODEL_MAX_TOKEN = 4096;
 
-const openai = new OpenAIApi(new Configuration({
-  apiKey: LOCAL_OPENAI_API_KEY,
-}));
-
 export function countTokens(input: string): number {
   return encode(input).length;
 }
 
-export async function runChatCompletion(messages: ChatCompletionRequestMessage[]): Promise<string> {
+export async function runChatCompletion(apiKey: string, messages: ChatCompletionRequestMessage[]): Promise<string> {
+  const openai = new OpenAIApi(new Configuration({apiKey}));
+
   try {
     const totalLimit = MODEL_MAX_TOKEN;
     const responseMaxTokenCount = totalLimit - countTokens(messages.map((m) => m.content).join(' '));
@@ -41,7 +38,9 @@ export async function runChatCompletion(messages: ChatCompletionRequestMessage[]
   }
 }
 
-export async function runEmbedding(contentArray: string[], skipMinSizeCheck = false) {
+export async function runEmbedding(apiKey: string, contentArray: string[], skipMinSizeCheck = false) {
+  const openai = new OpenAIApi(new Configuration({apiKey}));
+
   try {
     console.debug('[OpenAI] Calculating embedding.', contentArray)
     const tokenLimit = MODEL_MAX_TOKEN;
@@ -84,7 +83,7 @@ function getMaxContextWithoutExceedingLimit(allContext: string[], modelLimit: nu
   return context;
 }
 
-export function constructChatMessages(allContext: string[], query: string): ChatMessage[] {
+export function constructChatMessages(allContext: string[], query: string): ChatCompletionRequestMessage[] {
   const context = getMaxContextWithoutExceedingLimit(allContext, MODEL_MAX_TOKEN, countTokens(PREFIX) + countTokens(query))
 
   // Note: the indentation and spacing below is intentiona.

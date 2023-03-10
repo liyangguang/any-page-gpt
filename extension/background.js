@@ -3,9 +3,11 @@ function scrapePage() {
 }
 
 chrome.runtime.onMessage.addListener((request,sender,sendResponse) => {
+  let url;
   // MUST NOT use async/await here. This funtion needs the return value of `true`
   chrome.tabs.query({ currentWindow: true, active: true })
       .then((([tab]) => {
+        url = tab.url
         console.info('[Background] Triggering scrapper');
         return chrome.scripting.executeScript({
           target: { tabId: tab.id },
@@ -13,7 +15,7 @@ chrome.runtime.onMessage.addListener((request,sender,sendResponse) => {
         });
       })).then((result) => {
         console.info('[Background] Scrapper done');
-        sendResponse(result[0].result);
+        sendResponse({content: result[0].result, url});
       });
 
   // THIS IS CRITICAL! It must return `true` here to notify Chrome that the response will be async (above)
