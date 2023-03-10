@@ -1,0 +1,23 @@
+{
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c",
+    "start": "rollup -c -w"
+  },
+  "name": "any-page-gpt-extension",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^24.0.1",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@types/chrome": "^0.0.220",
+    "@types/node": "^18.15.0",
+    "rollup": "^3.19.0",
+    "rollup-plugin-chrome-extension": "^3.6.10"
+  },
+  "dependencies": {
+    "@mozilla/readability": "^0.4.2"
+  }
+}

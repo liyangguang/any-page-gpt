@@ -1,7 +1,12 @@
+import {Readability} from '@mozilla/readability';
+
 function scrapePage() {
-  // TODO: add npm for extension part.
-  // article = new Readability(document).parse();
-  return 'yg' + document.querySelector('p').textContent;
+  console.log('scrape 2')
+  console.log(Readability)
+  // console.log('Readability', Readability)
+  // const article = new Readability(document).parse();
+  // console.log('article', article)
+  return 'content:' + document.querySelector('p').textContent;
 }
 
 chrome.runtime.onMessage.addListener((request,sender,sendResponse) => {

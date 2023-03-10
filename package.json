@@ -1,5 +1,5 @@
 {
-	"name": "my-app",
+	"name": "any-page-gpt",
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
@@ -21,7 +21,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@mozilla/readability": "^0.4.2",
 		"compute-cosine-similarity": "^1.0.0",
 		"gpt-3-encoder": "^1.1.4",
 		"openai": "^3.2.1"
