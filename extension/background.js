@@ -1,4 +1,6 @@
 function scrapePage() {
+  // TODO: add npm for extension part.
+  // article = new Readability(document).parse();
   return 'yg' + document.querySelector('p').textContent;
 }
 
