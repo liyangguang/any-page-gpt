@@ -7,11 +7,10 @@
   let query = '';
   let result = '';
 
-  function _getKeyFromStorage() {
-    chrome.storage.sync.get(STORAGE_KEY_NAME, (value) => {
-      apiKey = value[STORAGE_KEY_NAME] || '';
-      isSettingPage = !apiKey
-    });
+  async function _getKeyFromStorage() {
+    const store = await chrome.storage.sync.get(STORAGE_KEY_NAME);
+    apiKey = store[STORAGE_KEY_NAME] || '';
+    isSettingPage = !apiKey
   }
 
   function process() {
@@ -19,7 +18,7 @@
     chrome.runtime.sendMessage(undefined, async (pageInfo) => {
       console.info('[Popup] Received html');
       try {
-        const body = await fetchJson('http://localhost:5173/api/process', pageInfo)
+        const body = await _fetchJson('process', pageInfo)
         embeddings = body;
         result = 'Processing done. Ready to answer questions.'
       } catch (e) {
@@ -33,21 +32,20 @@
 
     result = 'Asking...'
     console.info('[Popup] Asking');
-    const body = await fetchJson('http://localhost:5173/api/reply', {embeddings, query: query})
+    const body = await _fetchJson('reply', {embeddings, query: query})
     console.log(body);
     result = body.result;
   }
 
-  function saveKey() {
-    chrome.storage.sync.set({[STORAGE_KEY_NAME]: apiKey}, () => {
-      console.info('[Extension] Stored API key')
-      isSettingPage = false;
-    });
+  async function saveKey() {
+    await chrome.storage.sync.set({[STORAGE_KEY_NAME]: apiKey});
+    console.info('[Extension] Stored API key')
+    isSettingPage = false;
   }
 
-  async function fetchJson(url, body) {
+  async function _fetchJson(url, body) {
     if (!apiKey) throw new Error('No API key provided');
-    const res = await fetch(url, {method: 'POST', body: JSON.stringify({...body, apiKey: apiKey})})
+    const res = await fetch(`${import.meta.env.VITE_API_URL}${url}`, {method: 'POST', body: JSON.stringify({...body, apiKey: apiKey})})
     if (!res.ok) throw new Error(await res.text())
     return await res.json();
   }

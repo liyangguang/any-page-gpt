@@ -20,6 +20,7 @@
     "vite": "^4.1.0"
   },
   "dependencies": {
+    "@types/chrome": "^0.0.222",
     "rollup-plugin-watch": "^1.0.2"
   }
 }
