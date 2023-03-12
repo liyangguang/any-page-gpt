@@ -1,6 +1,6 @@
 {
-	"name": "my-app",
-	"version": "0.0.1",
+	"name": "any-page-gpt",
+	"version": "1.0.0",
 	"private": true,
 	"scripts": {
 		"start": "npm run dev",
