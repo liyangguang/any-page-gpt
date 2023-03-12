@@ -17,7 +17,7 @@
     bot: string;
   }
 
-  let embeddings: number[] = [];
+  let embeddingsCache: number[] = [];
   let query = '';
   let conversations: ChatConversation[] = [{user: '', bot: 'Hi, I can answer anything about the content on this page.'}];
   let latestConversation: ChatConversation;
@@ -28,22 +28,23 @@
     conversations = [...conversations];
   }
 
-  function _process(): Promise<void> {
-    _updateLatestConversationBotMessage('One sec, let me read the page...');
-    return new Promise((resolve, reject) => {
-      chrome.runtime.sendMessage(undefined, async (pageInfo) => {
-        console.info('[Popup] Received html');
-        try {
-          const body = await fetchApi<EmbedddingResponseBody>('process', pageInfo);
-          embeddings = body.embeddings;
-          _updateLatestConversationBotMessage('Okay, I read the page. Let me think about your question...');
-          resolve();
-        } catch (e) {
-          _updateLatestConversationBotMessage(`Hmm... I couldn't read the page. ${e?.message}`);
-          reject(e);
-        }
-      });
-    })
+  async function _process(): Promise<void> {
+    _updateLatestConversationBotMessage('Let me check the page...');
+
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      const response = await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: () => document.querySelector('body').innerHTML,
+      })
+      const htmlBody = response[0].result;
+      _updateLatestConversationBotMessage('One sec, let me read the page...');
+
+      const body = await fetchApi<EmbedddingResponseBody>('process', htmlBody);
+      embeddingsCache = body.embeddings;
+    } catch (e) {
+      _updateLatestConversationBotMessage(`Hmm... I couldn't read the page. ${e?.message}`);
+    }
   }
 
   async function ask() {
@@ -51,11 +52,10 @@
 
     conversations = [...conversations, {user: query, bot: ''}];
     await tick();
-    if (!embeddings.length) await _process();
+    if (!embeddingsCache.length) await _process();
 
     _updateLatestConversationBotMessage('Thinking...');
-    console.info('[Popup] Asking');
-    const body = await fetchApi<CompletionResponseBody>('reply', {embeddings, query});
+    const body = await fetchApi<CompletionResponseBody>('reply', {embeddings: embeddingsCache, query});
     _updateLatestConversationBotMessage(body.result);
     query = '';
   }
