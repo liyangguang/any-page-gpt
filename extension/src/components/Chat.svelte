@@ -43,7 +43,9 @@
       const body = await fetchApi<EmbedddingResponseBody>('process', htmlBody);
       embeddingsCache = body.embeddings;
     } catch (e) {
+      console.error(e);
       _updateLatestConversationBotMessage(`Hmm... I couldn't read the page. ${e?.message}`);
+      throw e;
     }
   }
 
@@ -55,9 +57,14 @@
     if (!embeddingsCache.length) await _process();
 
     _updateLatestConversationBotMessage('Thinking...');
-    const body = await fetchApi<CompletionResponseBody>('reply', {embeddings: embeddingsCache, query});
-    _updateLatestConversationBotMessage(body.result);
-    query = '';
+    try {
+      const body = await fetchApi<CompletionResponseBody>('reply', {embeddings: embeddingsCache, query});
+      _updateLatestConversationBotMessage(body.result);
+      query = '';
+    } catch (e) {
+      console.error(e);
+      _updateLatestConversationBotMessage(`Hmm... Something went wrong... ${e?.message}`);
+    }
   }
 </script>
 

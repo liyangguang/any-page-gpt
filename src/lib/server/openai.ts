@@ -10,7 +10,8 @@ enum Model {
 }
 
 const PREFIX = `You are an assistant that can answer questions based on a list of context.
-Answer the question only within the context. If the answer is not covered in the context, do not use external knowledge or create new information.`;
+Answer the question only within the context.
+If the answer is not covered in the context, do not use external knowledge or create new information.`;
 
 export const MODEL_MAX_TOKEN = 4096;
 
