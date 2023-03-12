@@ -12,7 +12,7 @@ export const POST = (async ({request}) => {
 
   try {
     console.info('==================== Start chunking');
-    const contentArray = chunkContent(cleanedContent, MODEL_MAX_TOKEN, countTokens);
+    const contentArray = chunkContent(cleanedContent, MODEL_MAX_TOKEN / 10, countTokens);
     console.info('==================== Start embedding');
     const embeddings = await runEmbedding(apiKey, contentArray);
     console.info('==================== Embedding done');
