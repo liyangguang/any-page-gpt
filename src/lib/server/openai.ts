@@ -1,7 +1,7 @@
 import {encode} from 'gpt-3-encoder';
 import { Configuration, OpenAIApi, type ChatCompletionRequestMessage } from "openai";
+import type {EmbeddingResult} from '$lib/types';
 
-const EMBEDDING_SKIPPING_THRESHOLD_IN_TOKENS = 10;  // Skip embedding content that is too short (e.g. just a title)
 const COMPLETION_PROMPT_TOKEN_MAX_RATIO = .7;  // Max ratio of the prompt out of the total token limit
 
 enum Model {
@@ -31,6 +31,7 @@ export async function runChatCompletion(apiKey: string, messages: ChatCompletion
       messages,
       temperature: 0,
     });
+    // TODO: return costs
     const result = response.data.choices[0].message?.content || '';
     return result;
   } catch (error) {
@@ -38,25 +39,20 @@ export async function runChatCompletion(apiKey: string, messages: ChatCompletion
   }
 }
 
-export async function runEmbedding(apiKey: string, contentArray: string[], skipMinSizeCheck = false) {
+export async function runEmbedding(apiKey: string, contentArray: string[]): Promise<EmbeddingResult[]> {
   const openai = new OpenAIApi(new Configuration({apiKey}));
 
   try {
     console.debug('[OpenAI] Calculating embedding.', contentArray)
-    const tokenLimit = MODEL_MAX_TOKEN;
-    const acceptableContentArray = contentArray.filter((contentPiece) => {
-      const contentSize = countTokens(contentPiece);
-      if (contentSize > tokenLimit) throw new Error(`Input exceeds model token limit. (${contentSize} > ${tokenLimit}. Raw content piece: ${contentPiece})`);
-      return skipMinSizeCheck || contentSize > EMBEDDING_SKIPPING_THRESHOLD_IN_TOKENS;
-    });
-    if (!acceptableContentArray.length) return [];
+    if (!contentArray.length) return [];
 
     // `openai.createEmbedding` accepts batch `input` by default
-    const response = await openai.createEmbedding({model: Model.TEXT_EMBEDDING_ADA_002, input: acceptableContentArray});
+    const response = await openai.createEmbedding({model: Model.TEXT_EMBEDDING_ADA_002, input: contentArray});
+    // TODO: return costs
     return response.data.data.map((e, index) => {
       return {
         embedding: e.embedding,
-        content: acceptableContentArray[index],
+        content: contentArray[index],
       };
     });
   } catch (error) {
@@ -73,7 +69,6 @@ function getMaxContextWithoutExceedingLimit(allContext: string[], modelLimit: nu
   let currentTokenCount = 0
   for (const piece of allContext) {
     const pieceTokenCount = countTokens(piece);
-    if (pieceTokenCount < EMBEDDING_SKIPPING_THRESHOLD_IN_TOKENS) continue;
     if (currentTokenCount + pieceTokenCount > remainingTokenForContext) {
       break;
     }

@@ -11,7 +11,7 @@ export const POST = (async ({request}) => {
 
   try {
     console.info('==================== Embedding query');
-    const queryEmbedding = (await runEmbedding(apiKey, [query], true))[0].embedding;
+    const queryEmbedding = (await runEmbedding(apiKey, [query]))[0].embedding;
     console.info('==================== Searching embedding');
     const searchResult = embeddings
       .map((entry) => ({
