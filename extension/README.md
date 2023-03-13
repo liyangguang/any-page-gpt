@@ -1,6 +1,6 @@
 # AnyPageGPT extension
 
-This is the extension part of the code. Check the [project root](../../) for more information about the project.
+This is the extension part of the code. Check the project root for more information about the project.
 
 ## How to develop
 
