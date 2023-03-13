@@ -166,7 +166,7 @@
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
-    height: 1.6em;
+    height: 1.8em;
     aspect-ratio: 1/1;
   }
 </style>

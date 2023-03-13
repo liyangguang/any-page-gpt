@@ -37,10 +37,12 @@
 
 <style>
   .page {
+    /* This sets the size of the popup */
+    width: 350px;
+    height: 500px;
+
     display: grid;
     grid-template-rows: auto 1fr auto;
-    width: 300px;
-    height: 450px;
     background: #F8F8F8;
     outline: 1px solid red;
     margin: auto;
