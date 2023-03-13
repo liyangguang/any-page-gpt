@@ -29,6 +29,7 @@ button, input {
 
 button {
   background: transparent;
+  transition: opacity .2s ease;
 }
 
 button:not([disabled]) {
@@ -37,6 +38,5 @@ button:not([disabled]) {
 
 button[disabled] {
   cursor: not-allowed;
-  opacity: .8;
-  filter: grayscale(1);
+  opacity: .6;
 }

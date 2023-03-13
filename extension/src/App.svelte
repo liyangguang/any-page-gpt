@@ -1,6 +1,7 @@
 <script lang="ts">
   import Chat from '@/components/Chat.svelte';
   import Settings from '@/components/Settings.svelte';
+  import Donut from '@/components/Donut.svelte';
   import {getOpenAIApiKeyFromStorage, getUsedCostFromStorage} from '@/shared/chrome';
   import {FREE_TRIAL_LIMIT_IN_DOLLAR} from '@/shared/utils';
   import {apiKey, usedCost} from '@/shared/stores';
@@ -22,7 +23,9 @@
 <div class="page">
   <header>
     <h1>AnyPageGPT</h1>
-    <button on:click={() => isSettingPage = !isSettingPage} aria-label="Usage and Settings" title="Usage and Settings">{$usedCost / FREE_TRIAL_LIMIT_IN_DOLLAR}</button>
+    <button class="progress-button" on:click={() => isSettingPage = !isSettingPage} aria-label="Usage and Settings" title="Usage and Settings">
+      <Donut value={$usedCost / FREE_TRIAL_LIMIT_IN_DOLLAR} />
+    </button>
   </header>
   
   {#if isSettingPage}
@@ -50,6 +53,10 @@
     justify-content: space-between;
     box-shadow: 0px 4px 4px rgba(217, 217, 217, 0.25);
     padding: .6em 1em;
+  }
+
+  .progress-button {
+    width: 1.6em;
   }
 
   h1 {

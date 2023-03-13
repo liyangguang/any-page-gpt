@@ -23,7 +23,10 @@
   {#if $apiKey}
     <p>(Using own API key)</p>
   {:else}
-    <p>{usedCostString} / {formatCurrency(FREE_TRIAL_LIMIT_IN_DOLLAR)} new user credit used.</p>
+    <div class="bar-bg">
+      <div class="bar" style="width: {$usedCost / FREE_TRIAL_LIMIT_IN_DOLLAR * 100}%"></div>
+    </div>
+    <p>{usedCostString} / {formatCurrency(FREE_TRIAL_LIMIT_IN_DOLLAR)} free credit used.</p>
     <p>Use your own API key below for unlimited usage (OpenAI has free credit).</p>
   {/if}
   <hr>
@@ -85,5 +88,17 @@
 
   .grow {
     flex: 1;
+  }
+
+  .bar-bg {
+    background: #fff;
+    border-radius: .25em;
+    margin: 0.5em;
+  }
+
+  .bar {
+    background-image: linear-gradient(#FFBF98, #F76B79);
+    border-radius: .25em;
+    height: .5em;
   }
 </style>
