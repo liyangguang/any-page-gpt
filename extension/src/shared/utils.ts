@@ -37,7 +37,7 @@ export async function getAnswer(embeddings: EmbeddingResult[], query: string): P
   return body.result;
 }
 
-async function fetchApi<RequestBody, ReponseBody>(path: string, body: Omit<RequestBody, 'apiKey'>): Promise<ReponseBody> {
+async function fetchApi<RequestBody, ReponseBody>(path: string, requestBody: Omit<RequestBody, 'apiKey'>): Promise<ReponseBody> {
   return new Promise((resolve, reject) => {
     apiKey.subscribe(async (apiKeyValue) => {
       usedCost.subscribe(async (usedCostValue) => {
@@ -50,10 +50,14 @@ async function fetchApi<RequestBody, ReponseBody>(path: string, body: Omit<Reque
           const res = await fetch(`${import.meta.env.VITE_API_URL}${path}`, {
             method: 'POST',
             mode: 'cors',
-            body: JSON.stringify({...body, apiKey: apiKeyValue}),
+            body: JSON.stringify({...requestBody, apiKey: apiKeyValue}),
           })
           if (!res.ok) reject(new Error(await res.text()))
-          return resolve(res.json());
+          const responseBody = await res.json();
+          if (apiKeyValue) {
+            responseBody.cost = 0;
+          }
+          return resolve(responseBody);
         } catch (e) {
           reject(e);
         }
