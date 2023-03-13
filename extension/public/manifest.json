@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Ask GPT (WIP)",
-  "description": "Ask anything about the current page",
-  "version": "0.0.1",
+  "name": "AnyPageGPT",
+  "description": "Make any page into a GPT chatbot.",
+  "author": "liyangguangcn@gmail.com",  
+  "version": "0.1",
   "icons": {
     "16": "icon16.png",
     "48": "icon48.png",

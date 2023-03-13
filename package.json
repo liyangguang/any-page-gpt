@@ -1,7 +1,8 @@
 {
 	"name": "any-page-gpt",
 	"version": "1.0.0",
-	"private": true,
+  "description": "An extension to make any pages into a GPT chatbot.",
+  "author": "Yangguang Li <liyangguangcn@gmail.com> (https://liyangguang.com/)",
 	"scripts": {
 		"start": "npm run dev",
 		"dev": "NODE_OPTIONS=--inspect vite dev",

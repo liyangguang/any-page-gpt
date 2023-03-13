@@ -1,3 +1,5 @@
-<h1>Hello</h1>
+<h1>AnyPageGPT</h1>
 
-<a href="#">Download</a>
+<p>Make any pages into a GPT chatbot!</p>
+
+<a href="/">Download</a>

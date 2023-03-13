@@ -23,7 +23,8 @@
   })();
 </script>
 
-<h1>Ask GPTa</h1>
+<h1>AnyPageGPT</h1>
+
 <button on:click={() => isSettingPage = !isSettingPage}>{usedCostString} / {formatCurrency(FREE_TRIAL_LIMIT_IN_DOLLAR)}</button>
 
 {#if isSettingPage}
