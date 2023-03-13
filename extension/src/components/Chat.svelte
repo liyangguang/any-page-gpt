@@ -14,18 +14,20 @@
   let latestConversation: ChatConversation;
   $: latestConversation = conversations[conversations.length - 1];
 
+  const HINTS = ['Give me a summary'];
+
   function _updateLatestConversationBotMessage(message: string): void {
     latestConversation.bot = message;
     conversations = [...conversations];
   }
 
-  async function _process(): Promise<void> {
+  async function _process(): Promise<EmbeddingResult[]> {
     _updateLatestConversationBotMessage('Let me check the page...');
 
     try {
       const pageInfo = await scrapePage();
       _updateLatestConversationBotMessage('One sec, let me read the page...');
-      embeddingsCache = await getEmbeddings(pageInfo)
+      return getEmbeddings(pageInfo);
     } catch (e) {
       console.error(e);
       _updateLatestConversationBotMessage(`Hmm... I couldn't read the page. ${e?.message}`);
@@ -33,12 +35,15 @@
     }
   }
 
-  async function ask() {
+  async function ask(overwriteQuery?: string) {
+    query = query || overwriteQuery;
     if (!query) return;
 
     conversations = [...conversations, {user: query, bot: ''}];
     await tick();
-    if (!embeddingsCache.length) await _process();
+    if (!embeddingsCache.length) {
+      embeddingsCache = await _process();
+    }
 
     _updateLatestConversationBotMessage('Thinking...');
     try {
@@ -52,12 +57,103 @@
   }
 </script>
 
-{#each conversations as conversation}
-  {#if conversation.user}<div class="user">{conversation.user}</div>{/if}
-  <div class="bot">{conversation.bot}</div>
-{/each}
+<div class="scroll-area">
+  {#each conversations as conversation}
+    {#if conversation.user}<div class="user">{conversation.user}</div>{/if}
+    <div class="bot">{conversation.bot}</div>
+  {/each}
+</div>
 
-<form on:submit|preventDefault={ask}>
-  <input placeholder="What is the summary" bind:value={query}>
-  <button disabled={!query}>ask</button>
+<form on:submit|preventDefault={() => ask()}>
+  {#if conversations.length === 1}
+    <ul class="hints">
+      {#each HINTS as hint}
+        <li>
+          <button type="button" class="tip" on:click={() => ask(hint)}>{hint}</button>
+        </li>
+      {/each}
+    </ul>
+  {/if}
+  <input placeholder="Ask questions about this page" bind:value={query}>
+  <button class="ask-button" disabled={!query} aria-label="Ask"></button>
 </form>
+
+<style>
+  .scroll-area {
+    overflow-y: auto;
+    padding: .5em 1em 3em;
+  }
+
+  .user,
+  .bot {
+    border-radius: 1em;
+    max-width: 90%;
+    padding: .5em 1em;
+    width: fit-content;
+    margin-top: .5em;
+    margin-bottom: .5em;
+    background: #fff;
+  }
+
+  .user {
+    color: #fff;
+    background: #000;
+    margin-left: auto;
+  }
+
+  .bot {
+    color: #525253;
+  }
+
+  form {
+    display: flex;
+    align-items: center;
+    gap: .5em;
+    padding: 0.5em 1em;
+    background: #fff;
+    box-shadow: 0px -4px 4px rgba(217, 217, 217, 0.25);
+    position: relative;
+  }
+
+  input {
+    flex: 1;
+    background: #F8F8F8;
+    border-radius: 1em;
+    padding: .5em 1em;
+  }
+
+  .hints {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    overflow-x: auto;
+    display: flex;
+    gap: 1em;
+    white-space: nowrap;
+    list-style: none;
+    width: 100%;
+    padding: .5em 1em;
+  }
+
+  .hints button {
+    border: 1px solid #ccc;
+    border-radius: 1em;
+    background: #fff;
+    padding: .2em 0.5em;
+    transition: box-shadow .2s ease;
+  }
+
+  .hints button:hover {
+    box-shadow: 1px 2px 4px #0003;
+  }
+
+  .ask-button {
+    background-image: url(../assets/icon-send.svg);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    height: 1.6em;
+    aspect-ratio: 1/1;
+  }
+</style>

@@ -1,7 +1,14 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Lato', sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  font-size: 90%;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -10,15 +17,26 @@
   -webkit-text-size-adjust: 100%;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+h1, h2, h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
 }
 
-#app {
-  width: 600px;
-  height: 500px;
+button, input {
+  font: inherit;
+  border: 0;
+}
+
+button {
+  background: transparent;
+}
+
+button:not([disabled]) {
+  cursor: pointer;
+}
+
+button[disabled] {
+  cursor: not-allowed;
+  opacity: .8;
+  filter: grayscale(1);
 }

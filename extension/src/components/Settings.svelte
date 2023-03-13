@@ -1,19 +1,89 @@
 <script lang="ts">
   import {saveOpenAIApiKey} from '@/shared/chrome';
   import {FREE_TRIAL_LIMIT_IN_DOLLAR, formatCurrency} from '@/shared/utils';
+  import {apiKey, usedCost} from '@/shared/stores';
 
-  let apiKeyInput = '';
+  let apiKeyInput = $apiKey;
+  let saveButtonText = 'Save';
+  $: usedCostString = formatCurrency($usedCost, true);
 
-  function saveOpenAIApiKeyClick() {
-    saveOpenAIApiKey(apiKeyInput);
+  async function formSubmit() {
+    saveButtonText = 'Saving...';
+    try {
+      await saveOpenAIApiKey(apiKeyInput);
+    } catch (e) {
+      saveButtonText = `Failed. ${e?.message}`;
+    }
+    saveButtonText = 'Saved!';
   }
 </script>
 
-<div>
-  <h2>Save OpenAI API key</h2>
-  <p>New user get a free trail of {formatCurrency(FREE_TRIAL_LIMIT_IN_DOLLAR)}. Use your own API key (with free credit from OpenAI) for unlimited usage.</p>
-  <p>You can generate an API key (i.e. secret key) by one click on <a href="https://platform.openai.com/account/api-keys" target="_blank" rel="noreferrer">OpenAI setting</a> (create an account if haven't)</p>
-  <input bind:value={apiKeyInput} placeholder="sk-...">
-  <button on:click={saveOpenAIApiKeyClick}>save</button>
-  <p>Your API key is only stored in your browser profile, and only used for your own usage. We don't keep it, or use it for any other purpose.</p>
-</div>
+<main>
+  <h2>Free credit usage</h2>
+  {#if $apiKey}
+    <p>(Using own API key)</p>
+  {:else}
+    <p>{usedCostString} / {formatCurrency(FREE_TRIAL_LIMIT_IN_DOLLAR)} new user credit used.</p>
+    <p>Use your own API key below for unlimited usage (OpenAI has free credit).</p>
+  {/if}
+  <hr>
+  <h2>OpenAI API key</h2>
+  <p>Generate it on <a href="https://platform.openai.com/account/api-keys" target="_blank" rel="noreferrer">OpenAI setting</a> (create an account if haven't)</p>
+  <form on:submit|preventDefault={formSubmit}>
+    <input bind:value={apiKeyInput} placeholder="sk-...">
+    <button>{saveButtonText}</button>
+  </form>
+  <p class="note">* Your API key is only stored in your browser profile, and only used for your own usage.</p>
+  <hr>
+  <div class="grow"></div>
+  <footer>
+    Designed by Yi. Built by Yangguang. <a href="https://any-page-gpt.vercel.app/" target="_blank" rel="noreferrer">Learn more</a>
+  </footer>
+</main>
+
+
+<style>
+  main {
+    font-size: 0.9em;
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    min-height: 100%;
+  }
+
+  h2 {
+    font-size: 1.2em;
+  }
+
+  hr {
+    margin: 1em 0;
+    opacity: 0.6;
+  }
+
+  form {
+    display: flex;
+    align-items: center;
+    gap: .5em;
+  }
+
+  input {
+    flex: 1;
+    padding: .5em;
+  }
+
+  button {
+    border: 1px solid #ccc;
+    border-radius: .5em;
+    padding: .3em 0.5em;
+    background: #fff;
+  }
+
+  .note {
+    font-size: .85em;
+  }
+
+  .grow {
+    flex: 1;
+  }
+</style>

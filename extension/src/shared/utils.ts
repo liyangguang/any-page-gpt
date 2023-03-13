@@ -2,6 +2,8 @@ import {apiKey, usedCost} from '@/shared/stores';
 import type {EmbeddingResult, PageContent, ReplyRequestBody, ReplyResponseBody, ProcessRequestBody, ProcessResponseBody} from '$be/types';
 import {updateUsedCost} from '@/shared/chrome';
 
+const SKIP_API_CALL = false;
+
 export const FREE_TRIAL_LIMIT_IN_DOLLAR = 0.1;
 
 const CURRENCY_FORMATTER_DETAILED = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', minimumFractionDigits: 3 });
@@ -20,13 +22,15 @@ export async function scrapePage(): Promise<PageContent> {
 }
 
 export async function getEmbeddings(pageInfo: PageContent): Promise<EmbeddingResult[]> {
+  if (SKIP_API_CALL) return [];
   const body = await fetchApi<ProcessRequestBody, ProcessResponseBody>('process', pageInfo);
   usedCost.update((previous) => previous + body.cost);
   updateUsedCost(body.cost)
   return body.embeddings;
 }
 
-export async function getAnswer(embeddings: EmbeddingResult[], query: string) {
+export async function getAnswer(embeddings: EmbeddingResult[], query: string): Promise<string> {
+  if (SKIP_API_CALL) return 'Example answer. '.repeat(Math.random() * 10 + 1);
   const body = await fetchApi<ReplyRequestBody, ReplyResponseBody>('reply', {embeddings, query});
   usedCost.update((previous) => previous + body.cost);
   updateUsedCost(body.cost)
