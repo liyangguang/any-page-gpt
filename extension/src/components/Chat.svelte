@@ -1,14 +1,14 @@
 <script lang="ts">
   import { tick } from 'svelte';
   import {getAnswer, scrapePage, getEmbeddings} from '../shared/utils';
-  import type {EmbeddingBody} from '../shared/types';
+  import type {EmbeddingResult} from '../../../src/lib/types';
 
   interface ChatConversation {
     user: string;
     bot: string;
   }
 
-  let embeddingsCache: EmbeddingBody[] = [];
+  let embeddingsCache: EmbeddingResult[] = [];
   let query = '';
   let conversations: ChatConversation[] = [{user: '', bot: 'Hi, I can answer anything about the content on this page.'}];
   let latestConversation: ChatConversation;

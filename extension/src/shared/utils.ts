@@ -1,16 +1,6 @@
 import {apiKey, usedCost} from './stores';
-import type {EmbeddingBody, PageContent} from './types';
+import type {EmbeddingResult, PageContent, ReplyRequestBody, ReplyResponseBody, ProcessRequestBody, ProcessResponseBody} from '../../../src/lib/types';
 import {updateUsedCost} from './chrome';
-
-interface EmbedddingResponseBody {
-  embeddings: EmbeddingBody[];
-  cost: number;
-}
-
-interface CompletionResponseBody {
-  result: string;
-  cost: number;
-}
 
 export async function scrapePage(): Promise<PageContent> {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -21,21 +11,21 @@ export async function scrapePage(): Promise<PageContent> {
   return {content: response[0].result, url: tab.url};
 }
 
-export async function getEmbeddings(pageInfo: PageContent): Promise<EmbeddingBody[]> {
-  const body = await fetchApi<EmbedddingResponseBody>('process', pageInfo);
+export async function getEmbeddings(pageInfo: PageContent): Promise<EmbeddingResult[]> {
+  const body = await fetchApi<ProcessRequestBody, ProcessResponseBody>('process', pageInfo);
   usedCost.update((previous) => previous + body.cost);
   updateUsedCost(body.cost)
   return body.embeddings;
 }
 
-export async function getAnswer(embeddings: EmbeddingBody[], query: string) {
-  const body = await fetchApi<CompletionResponseBody>('reply', {embeddings, query});
+export async function getAnswer(embeddings: EmbeddingResult[], query: string) {
+  const body = await fetchApi<ReplyRequestBody, ReplyResponseBody>('reply', {embeddings, query});
   usedCost.update((previous) => previous + body.cost);
   updateUsedCost(body.cost)
   return body.result;
 }
 
-async function fetchApi<ReponseBody>(path: string, body: Object): Promise<ReponseBody> {
+async function fetchApi<RequestBody, ReponseBody>(path: string, body: Omit<RequestBody, 'apiKey'>): Promise<ReponseBody> {
   return new Promise((resolve, reject) => {
     apiKey.subscribe(async (storedKey) => {
       try {

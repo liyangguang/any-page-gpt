@@ -1,6 +1,6 @@
 import {encode} from 'gpt-3-encoder';
 import { Configuration, OpenAIApi, type ChatCompletionRequestMessage } from "openai";
-import type {EmbeddingResponse, ChatCompletionResponse} from '$lib/types';
+import type {ProcessResponseBody, ReplyResponseBody} from '$lib/types';
 import {OPENAI_API_KEY} from '$env/static/private';
 
 const COMPLETION_PROMPT_TOKEN_MAX_RATIO = .7;  // Max ratio of the prompt out of the total token limit
@@ -26,7 +26,7 @@ function getOpenAiClient(apiKey: string): OpenAIApi {
   return new OpenAIApi(new Configuration({apiKey: apiKey || OPENAI_API_KEY}));
 }
 
-export async function runChatCompletion(apiKey: string, messages: ChatCompletionRequestMessage[]): Promise<ChatCompletionResponse> {
+export async function runChatCompletion(apiKey: string, messages: ChatCompletionRequestMessage[]): Promise<ReplyResponseBody> {
   const openai = getOpenAiClient(apiKey);
 
   try {
@@ -47,7 +47,7 @@ export async function runChatCompletion(apiKey: string, messages: ChatCompletion
   }
 }
 
-export async function runEmbedding(apiKey: string, contentArray: string[]): Promise<EmbeddingResponse> {
+export async function runEmbedding(apiKey: string, contentArray: string[]): Promise<ProcessResponseBody> {
   const openai = getOpenAiClient(apiKey);
 
   try {
