@@ -1,15 +1,13 @@
 <script lang="ts">
-  import Chat from './components/Chat.svelte';
-  import Settings from './components/Settings.svelte';
-  import {getOpenAIApiKeyFromStorage, getUsedCostFromStorage, FREE_TRIAL_LIMIT} from './shared/chrome';
-  import {apiKey, usedCost} from './shared/stores'
-
-  const CURRENCY_FORMATTER_DETAILED = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', minimumFractionDigits: 3 });
-  const CURRENCY_FORMATTER = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD',  });
+  import Chat from '@/components/Chat.svelte';
+  import Settings from '@/components/Settings.svelte';
+  import {getOpenAIApiKeyFromStorage, getUsedCostFromStorage} from '@/shared/chrome';
+  import {FREE_TRIAL_LIMIT_IN_DOLLAR, formatCurrency} from '@/shared/utils';
+  import {apiKey, usedCost} from '@/shared/stores'
 
   let isSettingPage = false;
   let usedCostString = '';
-  $: usedCostString = CURRENCY_FORMATTER_DETAILED.format($usedCost);
+  $: usedCostString = formatCurrency($usedCost, true);
 
   (async function () {
     const [apiKeyFromStorage, freeTrialTokenUsedFromStoarge] = await Promise.all([
@@ -19,14 +17,14 @@
     apiKey.set(apiKeyFromStorage);
     usedCost.set(freeTrialTokenUsedFromStoarge);
 
-    if (freeTrialTokenUsedFromStoarge > FREE_TRIAL_LIMIT && !apiKeyFromStorage) {
+    if (freeTrialTokenUsedFromStoarge > FREE_TRIAL_LIMIT_IN_DOLLAR && !apiKeyFromStorage) {
       isSettingPage = true;
     }
   })();
 </script>
 
 <h1>Ask GPTa</h1>
-<button on:click={() => isSettingPage = !isSettingPage}>{usedCostString} / {CURRENCY_FORMATTER.format(FREE_TRIAL_LIMIT)}</button>
+<button on:click={() => isSettingPage = !isSettingPage}>{usedCostString} / {formatCurrency(FREE_TRIAL_LIMIT_IN_DOLLAR)}</button>
 
 {#if isSettingPage}
   <Settings />

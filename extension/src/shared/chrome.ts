@@ -1,9 +1,7 @@
-import {apiKey, usedCost} from './stores';
+import {apiKey, usedCost} from '@/shared/stores';
 
 const OPENAI_API_KEY = 'OPENAI_API_KEY';
 const FREE_TRIAL_USED_COST = 'FREE_TRIAL_USED_COST';
-
-export const FREE_TRIAL_LIMIT = 5000;
 
 export async function getOpenAIApiKeyFromStorage(): Promise<string> {
   const store = await chrome.storage.sync.get(OPENAI_API_KEY);

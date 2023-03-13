@@ -1,4 +1,4 @@
-import {countTokens} from './openai';
+import {countTokens} from '$lib/server/openai';
 
 const EMBEDDING_CHUNK_TOKEN_SIZE = 200;
 

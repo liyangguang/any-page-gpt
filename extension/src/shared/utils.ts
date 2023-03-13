@@ -1,6 +1,14 @@
-import {apiKey, usedCost} from './stores';
+import {apiKey, usedCost} from '@/shared/stores';
 import type {EmbeddingResult, PageContent, ReplyRequestBody, ReplyResponseBody, ProcessRequestBody, ProcessResponseBody} from '$be/types';
-import {updateUsedCost} from './chrome';
+import {updateUsedCost} from '@/shared/chrome';
+
+export const FREE_TRIAL_LIMIT_IN_DOLLAR = 0.1;
+
+const CURRENCY_FORMATTER_DETAILED = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', minimumFractionDigits: 3 });
+const CURRENCY_FORMATTER = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD',  });
+export function formatCurrency(dollars: number, withExtraDigit = false): string {
+  return withExtraDigit ? CURRENCY_FORMATTER_DETAILED.format(dollars) : CURRENCY_FORMATTER.format(dollars);
+}
 
 export async function scrapePage(): Promise<PageContent> {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
