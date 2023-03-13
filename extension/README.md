@@ -1,7 +1,5 @@
 # AnyPageGPT extension
 
-An extension to make any pages into a GPT chatbot.
-
 This is the extension part of the code. Check the parent folder for more explanations of the project.
 
 ## How to develop
@@ -29,7 +27,7 @@ This is the extension part of the code. Check the parent folder for more explana
 
 Toggle `SKIP_API_CALL` in `/extension/src/shared/utils.ts` to skip the API calls (to save API usage).
 
-## Structure
+## File structure
 
 ```
 /src: The popup part of the extension. It's a normal Svelte app, together with `index.html`. Compiled by Vite via `npm run build`.

@@ -10,7 +10,7 @@ Check out the website - https://any-page-gpt.vercel.app/
 - Extension code: Svelte
 - GPT API: OpenAI
 
-## Structure
+## File structure
 
 ```
 /src and /static:
@@ -19,21 +19,18 @@ Check out the website - https://any-page-gpt.vercel.app/
     A separate Svelte codebase. Compiles the extension code. Published to Chrome Web Store manually.
 ```
 
-## How to develop the APIs and the landing page
+## How to develop
 
-### Setup
+### APIs and the landing page
 
-1. Fill in `.env` based on the instruction in `.example.env`.
-1. `npm i`.
+1. Setup
+    1. Fill in `.env` based on the instruction in `.example.env`.
+    1. `npm i`.
+1. Dev server
+    1. `npm start`, and the app will be available on http://localhost:5173/.
+1. Deployment
+    1. APIs and landing page: Linked to Vercel auto deployment.
 
-### Develop
+### The extension
 
-1. `npm start`, and the app will be available on http://localhost:5173/.
-
-### Deployment
-
-- APIs and landing page: Linked to Vercel auto deployment.
-
-### Extension
-
-Check `README` inside `/extension` to see how to develop the extension page.
+Follow `/extension/README`.
