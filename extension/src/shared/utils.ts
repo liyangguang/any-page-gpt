@@ -1,5 +1,5 @@
 import {apiKey, usedCost} from './stores';
-import type {EmbeddingResult, PageContent, ReplyRequestBody, ReplyResponseBody, ProcessRequestBody, ProcessResponseBody} from '../../../src/lib/types';
+import type {EmbeddingResult, PageContent, ReplyRequestBody, ReplyResponseBody, ProcessRequestBody, ProcessResponseBody} from '$be/types';
 import {updateUsedCost} from './chrome';
 
 export async function scrapePage(): Promise<PageContent> {

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { tick } from 'svelte';
-  import {getAnswer, scrapePage, getEmbeddings} from '../shared/utils';
-  import type {EmbeddingResult} from '../../../src/lib/types';
+  import {getAnswer, scrapePage, getEmbeddings} from '@/shared/utils';
+  import type {EmbeddingResult} from '$be/types';
 
   interface ChatConversation {
     user: string;

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import {saveOpenAIApiKey} from '../shared/chrome';
+  import {saveOpenAIApiKey} from '@/shared/chrome';
 
   let apiKeyInput = '';
 
