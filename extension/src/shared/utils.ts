@@ -35,18 +35,25 @@ export async function getAnswer(embeddings: EmbeddingResult[], query: string) {
 
 async function fetchApi<RequestBody, ReponseBody>(path: string, body: Omit<RequestBody, 'apiKey'>): Promise<ReponseBody> {
   return new Promise((resolve, reject) => {
-    apiKey.subscribe(async (storedKey) => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}${path}`, {
-          method: 'POST',
-          mode: 'cors',
-          body: JSON.stringify({...body, apiKey: storedKey}),
-        })
-        if (!res.ok) reject(new Error(await res.text()))
-        return resolve(res.json());
-      } catch (e) {
-        reject(e);
-      }
+    apiKey.subscribe(async (apiKeyValue) => {
+      usedCost.subscribe(async (usedCostValue) => {
+        if (usedCostValue > FREE_TRIAL_LIMIT_IN_DOLLAR && !apiKeyValue) {
+          reject(new Error('You used up free credits. Go to settings page to set up your API key.'));
+          return;
+        }
+
+        try {
+          const res = await fetch(`${import.meta.env.VITE_API_URL}${path}`, {
+            method: 'POST',
+            mode: 'cors',
+            body: JSON.stringify({...body, apiKey: apiKeyValue}),
+          })
+          if (!res.ok) reject(new Error(await res.text()))
+          return resolve(res.json());
+        } catch (e) {
+          reject(e);
+        }
+      });
     })
   });
 }

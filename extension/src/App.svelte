@@ -10,14 +10,12 @@
   $: usedCostString = formatCurrency($usedCost, true);
 
   (async function () {
-    const [apiKeyFromStorage, freeTrialTokenUsedFromStoarge] = await Promise.all([
+    [$apiKey, $usedCost] = await Promise.all([
       getOpenAIApiKeyFromStorage(),
       getUsedCostFromStorage(),
     ])
-    apiKey.set(apiKeyFromStorage);
-    usedCost.set(freeTrialTokenUsedFromStoarge);
 
-    if (freeTrialTokenUsedFromStoarge > FREE_TRIAL_LIMIT_IN_DOLLAR && !apiKeyFromStorage) {
+    if ($usedCost > FREE_TRIAL_LIMIT_IN_DOLLAR && !$apiKey) {
       isSettingPage = true;
     }
   })();
