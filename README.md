@@ -24,12 +24,12 @@ Check out the website - https://any-page-gpt.vercel.app/
 ### APIs and the landing page
 
 1. Setup
-    1. Fill in `.env` based on the instruction in `.example.env`.
-    1. `npm i`.
+    - Fill in `.env` based on the instruction in `.example.env`.
+    - `npm i`.
 1. Dev server
-    1. `npm start`, and the app will be available on `http://localhost:5173/`.
+    - `npm start`, and the app will be available on `http://localhost:5173/`.
 1. Deployment
-    1. APIs and landing page: Linked to Vercel auto deployment.
+    - APIs and landing page: Linked to Vercel auto deployment.
 
 ### The extension
 
