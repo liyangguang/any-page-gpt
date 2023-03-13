@@ -14,10 +14,9 @@ export const POST = (async ({request}) => {
     console.info('==================== Start chunking');
     const contentArray = chunkContent(cleanedContent);
     console.info('==================== Start embedding');
-    const embeddings = await runEmbedding(apiKey, contentArray);
+    const {embeddings, cost} = await runEmbedding(apiKey, contentArray);
     console.info('==================== Embedding done');
-    // TODO: return costs
-    return new Response(JSON.stringify({embeddings}));
+    return new Response(JSON.stringify({embeddings, cost}));
   } catch (e) {
     console.info('==================== Error');
     console.error(e);

@@ -3,7 +3,7 @@ import {countTokens} from './openai';
 const EMBEDDING_CHUNK_TOKEN_SIZE = 200;
 
 export function chunkContent(input: string): string[] {
-  const sentences = segmentContent(input);
+  const sentences = input.split('\n').map(segmentContent).flat().map((s) => s.trim()).filter(String);
   return combinePartsIntoMaxSize(sentences);
 }
 
@@ -20,7 +20,7 @@ function combinePartsIntoMaxSize(sentences: string[]): string[] {
       result.push(current);
       current = '';
     }
-    current += sentence;
+    current += `\n${sentence}`;
   }
   if (current) result.push(current);
 

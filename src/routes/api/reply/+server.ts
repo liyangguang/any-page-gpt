@@ -2,14 +2,18 @@ import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import similarity from 'compute-cosine-similarity';
 import {runEmbedding, constructChatMessages, runChatCompletion} from '$lib/server/openai';
+import type {EmbeddingResult} from '$lib/types';
 
 export const POST = (async ({request}) => {
   const requestBody = await request.json();
-  const {apiKey, query, embeddings} = requestBody;
+  const {apiKey, query, embeddings}: {apiKey: string; query: string; embeddings: EmbeddingResult[]} = requestBody;
 
   try {
+    let totalCost = 0;
     console.info('==================== Embedding query');
-    const queryEmbedding = (await runEmbedding(apiKey, [query]))[0].embedding;
+    const queryEmbeddingResponse = await runEmbedding(apiKey, [query]);
+    const queryEmbedding = queryEmbeddingResponse.embeddings[0].embedding;
+    totalCost += queryEmbeddingResponse.cost;
     console.info('==================== Searching embedding');
     const searchResult = embeddings
       .map((entry) => ({
@@ -19,8 +23,9 @@ export const POST = (async ({request}) => {
       .sort((a, b) => a.similarity - b.similarity)
       .map((entry) => entry.content);
     const messages = constructChatMessages(searchResult, query)
-    const result = await runChatCompletion(apiKey, messages);
-    return new Response(JSON.stringify({result}));
+    const {result, cost} = await runChatCompletion(apiKey, messages);
+    totalCost += cost;
+    return new Response(JSON.stringify({result, cost: totalCost}));
   } catch (e) {
     console.info('==================== Error');
     console.error(e);

@@ -1,6 +1,6 @@
 import {encode} from 'gpt-3-encoder';
 import { Configuration, OpenAIApi, type ChatCompletionRequestMessage } from "openai";
-import type {EmbeddingResult} from '$lib/types';
+import type {EmbeddingResponse, ChatCompletionResponse} from '$lib/types';
 import {OPENAI_API_KEY} from '$env/static/private';
 
 const COMPLETION_PROMPT_TOKEN_MAX_RATIO = .7;  // Max ratio of the prompt out of the total token limit
@@ -10,11 +10,13 @@ enum Model {
   GPT_CHAT_TURBO_0301 = 'gpt-3.5-turbo-0301',
 }
 
-const PREFIX = `You are an assistant that can answer questions based on a list of context.
+const PREFIX = `You are an assistant that can answer questions based on a list of context coming from a web page.
 Answer the question only within the context.
 If the answer is not covered in the context, do not use external knowledge or create new information.`;
 
 export const MODEL_MAX_TOKEN = 4096;
+const EMBEDDING_DOLLAR_PRE_TOKEN = 0.0004 / 1000;
+const CHAT_COMPLETION_DOLLAR_PRE_TOKEN = 0.002 / 1000;
 
 export function countTokens(input: string): number {
   return encode(input).length;
@@ -24,7 +26,7 @@ function getOpenAiClient(apiKey: string): OpenAIApi {
   return new OpenAIApi(new Configuration({apiKey: apiKey || OPENAI_API_KEY}));
 }
 
-export async function runChatCompletion(apiKey: string, messages: ChatCompletionRequestMessage[]): Promise<string> {
+export async function runChatCompletion(apiKey: string, messages: ChatCompletionRequestMessage[]): Promise<ChatCompletionResponse> {
   const openai = getOpenAiClient(apiKey);
 
   try {
@@ -37,30 +39,33 @@ export async function runChatCompletion(apiKey: string, messages: ChatCompletion
       messages,
       temperature: 0,
     });
-    // TODO: return costs
+    console.log('completion', response.data)
     const result = response.data.choices[0].message?.content || '';
-    return result;
+    return {result, cost: (response.data.usage?.total_tokens || 0) * CHAT_COMPLETION_DOLLAR_PRE_TOKEN};
   } catch (error) {
     throw handleError(error, 'Chat');
   }
 }
 
-export async function runEmbedding(apiKey: string, contentArray: string[]): Promise<EmbeddingResult[]> {
+export async function runEmbedding(apiKey: string, contentArray: string[]): Promise<EmbeddingResponse> {
   const openai = getOpenAiClient(apiKey);
 
   try {
     console.info('[OpenAI] Calculating embedding.', contentArray)
-    if (!contentArray.length) return [];
+    if (!contentArray.length) return {embeddings: [], cost: 0};
 
     // `openai.createEmbedding` accepts batch `input` by default
     const response = await openai.createEmbedding({model: Model.TEXT_EMBEDDING_ADA_002, input: contentArray});
-    // TODO: return costs
-    return response.data.data.map((e, index) => {
+    const embeddings = response.data.data.map((e, index) => {
       return {
         embedding: e.embedding,
         content: contentArray[index],
       };
     });
+    return {
+      embeddings,
+      cost: response.data.usage.total_tokens * EMBEDDING_DOLLAR_PRE_TOKEN,
+    }
   } catch (error) {
     throw handleError(error, 'Embedding');
   }

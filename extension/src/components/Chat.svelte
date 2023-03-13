@@ -1,23 +1,14 @@
 <script lang="ts">
   import { tick } from 'svelte';
-  import {fetchApi} from '../shared/utils';
-
-  interface EmbedddingResponseBody {
-    tokens: number;
-    embeddings: number[];
-  }
-
-  interface CompletionResponseBody {
-    tokens: number;
-    result: string;
-  }
+  import {getAnswer, scrapePage, getEmbeddings} from '../shared/utils';
+  import type {EmbeddingBody} from '../shared/types';
 
   interface ChatConversation {
     user: string;
     bot: string;
   }
 
-  let embeddingsCache: number[] = [];
+  let embeddingsCache: EmbeddingBody[] = [];
   let query = '';
   let conversations: ChatConversation[] = [{user: '', bot: 'Hi, I can answer anything about the content on this page.'}];
   let latestConversation: ChatConversation;
@@ -32,16 +23,9 @@
     _updateLatestConversationBotMessage('Let me check the page...');
 
     try {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      const response = await chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        func: () => document.querySelector('body').innerHTML,
-      })
-      const htmlBody = response[0].result;
+      const pageInfo = await scrapePage();
       _updateLatestConversationBotMessage('One sec, let me read the page...');
-
-      const body = await fetchApi<EmbedddingResponseBody>('process', {content: htmlBody, url: tab.url});
-      embeddingsCache = body.embeddings;
+      embeddingsCache = await getEmbeddings(pageInfo)
     } catch (e) {
       console.error(e);
       _updateLatestConversationBotMessage(`Hmm... I couldn't read the page. ${e?.message}`);
@@ -58,8 +42,8 @@
 
     _updateLatestConversationBotMessage('Thinking...');
     try {
-      const body = await fetchApi<CompletionResponseBody>('reply', {embeddings: embeddingsCache, query});
-      _updateLatestConversationBotMessage(body.result);
+      const result = await getAnswer(embeddingsCache, query);
+      _updateLatestConversationBotMessage(result);
       query = '';
     } catch (e) {
       console.error(e);
