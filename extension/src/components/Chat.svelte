@@ -2,6 +2,7 @@
   import { tick } from 'svelte';
   import {getAnswer, scrapePage, getEmbeddings} from '@/shared/utils';
   import type {EmbeddingResult} from '$be/types';
+  import WaitingDot from '@/components/WaitingDot.svelte';
 
   interface ChatConversation {
     user: string;
@@ -13,6 +14,7 @@
   let conversations: ChatConversation[] = [{user: '', bot: 'Hi, I can answer anything about the content on this page.'}];
   let latestConversation: ChatConversation;
   $: latestConversation = conversations[conversations.length - 1];
+  let scrollAreaEl: HTMLElement;
 
   const HINTS = ['Give me a summary'];
 
@@ -39,8 +41,10 @@
     query = query || overwriteQuery;
     if (!query) return;
 
-    conversations = [...conversations, {user: query, bot: ''}];
+    conversations = [...conversations, {user: query, bot: ''}];    
     await tick();
+    _scrollToBottom();
+
     if (!embeddingsCache.length) {
       embeddingsCache = await _process();
     }
@@ -49,18 +53,27 @@
     try {
       const result = await getAnswer(embeddingsCache, query);
       _updateLatestConversationBotMessage(result);
+      _scrollToBottom();
       query = '';
     } catch (e) {
       console.error(e);
       _updateLatestConversationBotMessage(`Hmm... Something went wrong... ${e?.message}`);
     }
   }
+
+  async function _scrollToBottom() {
+    await tick();
+    scrollAreaEl.scrollTo({behavior: 'smooth', top: 9999999});
+  }
 </script>
 
-<div class="scroll-area">
+<div class="scroll-area" bind:this={scrollAreaEl}>
   {#each conversations as conversation}
     {#if conversation.user}<div class="user">{conversation.user}</div>{/if}
-    <div class="bot">{conversation.bot}</div>
+    <div class="bot">
+      {conversation.bot.replace(/\.\.\.$/, '')}
+      {#if conversation.bot.endsWith('...')}<WaitingDot />{/if}
+    </div>
   {/each}
 </div>
 

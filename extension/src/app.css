@@ -16,6 +16,11 @@
   -webkit-text-size-adjust: 100%;
 }
 
+body {
+  /* Chrome injects a weird CSS that sets popup body to 75%. */
+  font-size: 14px;
+}
+
 h1, h2, h3 {
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
