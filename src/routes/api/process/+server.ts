@@ -8,7 +8,7 @@ export const POST = (async ({request}) => {
   const requestBody = await request.json();
   const {apiKey, content, url} = requestBody;
 
-  const cleanedContent = cleanUpHTML(content, url)?.textContent || ''
+  const cleanedContent = cleanUpHTML(content, url);
 
   try {
     console.info('==================== Start chunking');

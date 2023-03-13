@@ -40,7 +40,7 @@
       const htmlBody = response[0].result;
       _updateLatestConversationBotMessage('One sec, let me read the page...');
 
-      const body = await fetchApi<EmbedddingResponseBody>('process', htmlBody);
+      const body = await fetchApi<EmbedddingResponseBody>('process', {content: htmlBody, url: tab.url});
       embeddingsCache = body.embeddings;
     } catch (e) {
       console.error(e);

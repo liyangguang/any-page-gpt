@@ -49,7 +49,7 @@ export async function runEmbedding(apiKey: string, contentArray: string[]): Prom
   const openai = getOpenAiClient(apiKey);
 
   try {
-    console.debug('[OpenAI] Calculating embedding.', contentArray)
+    console.info('[OpenAI] Calculating embedding.', contentArray)
     if (!contentArray.length) return [];
 
     // `openai.createEmbedding` accepts batch `input` by default
