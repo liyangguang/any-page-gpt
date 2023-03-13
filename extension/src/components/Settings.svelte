@@ -40,7 +40,7 @@
   <hr>
   <div class="grow"></div>
   <footer>
-    Designed by Yi. Built by Yangguang. <a href="https://any-page-gpt.vercel.app/" target="_blank" rel="noreferrer">Learn more</a>
+    Developed by Yangguang. Designed by Yi. <a href="https://any-page-gpt.vercel.app/#about" target="_blank" rel="noreferrer">Learn more</a>
   </footer>
 </main>
 
