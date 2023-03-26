@@ -34,7 +34,6 @@
     } catch (e) {
       console.error(e);
       _updateLatestConversationBotMessage(`Hmm... I couldn't read the page. ${e?.message}`);
-      throw e;
     }
   }
 
@@ -46,7 +45,7 @@
     await tick();
     _scrollToBottom();
 
-    if (!embeddingsCache.length) {
+    if (!embeddingsCache?.length) {
       embeddingsCache = await _process();
     }
 
