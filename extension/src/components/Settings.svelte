@@ -26,7 +26,7 @@
     <div class="bar-bg">
       <div class="bar" style="width: {$usedCost / FREE_TRIAL_LIMIT_IN_DOLLAR * 100}%"></div>
     </div>
-    <p>{usedCostString} / {formatCurrency(FREE_TRIAL_LIMIT_IN_DOLLAR)} used. (Cost depends on the page content size)</p>
+    <p>{usedCostString} / {formatCurrency(FREE_TRIAL_LIMIT_IN_DOLLAR)} used</p>
     <p class="note">Use your own API key below for unlimited usage (OpenAI has free credit, as well as paid usage).</p>
   {/if}
   <hr>

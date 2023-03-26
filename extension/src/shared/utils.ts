@@ -64,7 +64,7 @@ async function fetchApi<RequestBody, ReponseBody>(path: string, requestBody: Omi
   const apiKeyValue = get(apiKey);
   const usedCostValue = get(usedCost);
   if (usedCostValue > FREE_TRIAL_LIMIT_IN_DOLLAR && !apiKeyValue) {
-    throw new Error('You used up free credits. Go to settings page to set up your API key.');
+    throw new Error('You used up free credits. Go to settings page ("i" in the header) to set up your API key.');
   }
   const res = await fetch(`${import.meta.env.VITE_API_URL}${path}`, {
     method: 'POST',
