@@ -12,6 +12,5 @@
   "action": {
     "default_popup": "index.html"
   },
-  "permissions": ["activeTab", "scripting", "storage"],
-  "host_permissions": ["https://any-page-gpt.vercel.app/"]
+  "permissions": ["activeTab", "scripting", "storage"]
 }

@@ -10,7 +10,7 @@
   <section>
     <h1>AnyPageGPT</h1>
     <p>Make any pages into a GPT chatbot!</p>
-    <a href="https://chrome.google.com/webstore/detail/ask-gpt-wip/keelaohbekengdipnogignilgbabhhec">Install extension</a>
+    <a href="https://chrome.google.com/webstore/detail/keelaohbekengdipnogignilgbabhhec">Install extension</a>
     <!-- <img src="" alt="AnyPageGPT extension used on a web page"> -->
   </section>
   
