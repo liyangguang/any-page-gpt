@@ -5,7 +5,7 @@
 
   let apiKeyInput = $apiKey;
   let saveButtonText = 'Save';
-  $: usedCostString = formatCurrency($usedCost, true);
+  $: usedCostString = formatCurrency($usedCost);
 
   async function formSubmit() {
     saveButtonText = 'Saving...';
@@ -26,17 +26,17 @@
     <div class="bar-bg">
       <div class="bar" style="width: {$usedCost / FREE_TRIAL_LIMIT_IN_DOLLAR * 100}%"></div>
     </div>
-    <p>{usedCostString} / {formatCurrency(FREE_TRIAL_LIMIT_IN_DOLLAR)} free credit used.</p>
-    <p>Use your own API key below for unlimited usage (OpenAI has free credit).</p>
+    <p>{usedCostString} / {formatCurrency(FREE_TRIAL_LIMIT_IN_DOLLAR)} used. (Cost depends on the page content size)</p>
+    <p class="note">Use your own API key below for unlimited usage (OpenAI has free credit, as well as paid usage).</p>
   {/if}
   <hr>
-  <h2>OpenAI API key</h2>
+  <h2>My OpenAI API key</h2>
   <p>Generate it on <a href="https://platform.openai.com/account/api-keys" target="_blank" rel="noreferrer">OpenAI setting</a> (create an account if haven't)</p>
   <form on:submit|preventDefault={formSubmit}>
     <input bind:value={apiKeyInput} placeholder="sk-...">
     <button>{saveButtonText}</button>
   </form>
-  <p class="note">* Your API key is only stored in your browser profile, and only used for your own usage.</p>
+  <p class="note">Your API key is only stored in your browser profile, and only used for your own usage.</p>
   <hr>
   <div class="grow"></div>
   <footer>
@@ -84,6 +84,11 @@
 
   .note {
     font-size: .85em;
+    margin-top: 0.5em;
+  }
+
+  .note::before {
+    content: '* ';
   }
 
   .grow {

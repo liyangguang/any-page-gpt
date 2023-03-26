@@ -25,5 +25,6 @@
   svg {
     width: 100%;
     aspect-ratio: 1/1;
+    display: block;
   }
 </style>
