@@ -12,5 +12,6 @@
   "action": {
     "default_popup": "index.html"
   },
-  "permissions": ["activeTab", "scripting", "storage"]
+  "permissions": ["activeTab", "scripting", "storage"],
+  "host_permissions": ["https://vercel.com/liyangguang/any-page-gpt"]
 }

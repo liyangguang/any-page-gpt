@@ -1,6 +1,7 @@
 import type { Handle } from '@sveltejs/kit';
 
-const EXTENSION_ORIGIN = 'chrome-extension://dpbkckaamhodgomcfilpdllcjloeomfi';
+// const EXTENSION_ORIGIN = 'chrome-extension://dpbkckaamhodgomcfilpdllcjloeomfi';
+const EXTENSION_ORIGIN = 'https://en.wikipedia.org';
 
 export const handle: Handle = async ({ resolve, event }) => {
   const response = await resolve(event);
