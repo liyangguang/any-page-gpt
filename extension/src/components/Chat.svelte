@@ -29,7 +29,7 @@
     try {
       const pageInfo = await scrapePage();
       _updateLatestConversationBotMessage('One sec, let me read the page...');
-      return getEmbeddings(pageInfo);
+      return await getEmbeddings(pageInfo);
     } catch (e) {
       console.error(e);
       _updateLatestConversationBotMessage(`Hmm... I couldn't read the page. ${e?.message}`);
@@ -166,7 +166,7 @@
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
-    height: 1.8em;
+    height: 2.5em;
     aspect-ratio: 1/1;
   }
 </style>
