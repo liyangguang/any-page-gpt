@@ -25,6 +25,7 @@
     <h1>AnyPageGPT</h1>
     <button class="progress-button" on:click={() => isSettingPage = !isSettingPage} aria-label="Usage and Settings" title="Usage and Settings">
       <Donut value={$usedCost / FREE_TRIAL_LIMIT_IN_DOLLAR} />
+      <span class="progress-button-i _sans" aria-hidden="true">{isSettingPage ? '<' : 'i'}</span>
     </button>
   </header>
   
@@ -38,8 +39,8 @@
 <style>
   .page {
     /* This sets the size of the popup */
-    width: 350px;
-    height: 500px;
+    width: 380px;
+    height: 550px;
 
     display: grid;
     grid-template-rows: auto 1fr auto;
@@ -58,10 +59,24 @@
   }
 
   .progress-button {
-    width: 1.6em;
+    width: 2em;
+    position: relative;
+  }
+
+  .progress-button-i {
+    position: absolute;
+    inset: 0;
+    font-weight: 600;
+    line-height: 2em;
   }
 
   h1 {
+    background-image: url(./assets/logo.svg);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: left;
+    padding-left: 2em;
     font-size: 1.2em;
   }
+
 </style>
