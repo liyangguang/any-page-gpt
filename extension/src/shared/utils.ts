@@ -1,7 +1,14 @@
 import {get} from 'svelte/store';
 import {apiKey, usedCost} from '@/shared/stores';
-import type {EmbeddingResult, PageContent, ReplyRequestBody, ReplyResponseBody, ProcessRequestBody, ProcessResponseBody} from '$be/types';
+import type {EmbeddingResult, ReplyRequestBody, ReplyResponseBody, ProcessRequestBody, ProcessResponseBody} from '$be/types';
 import {updateUsedCost} from '@/shared/chrome';
+import { Readability } from '@mozilla/readability';
+import { convert } from 'html-to-text';
+
+interface PageContent {
+  content: string;
+  url: string;
+}
 
 const SKIP_API_CALL = false;
 
@@ -20,9 +27,26 @@ export async function scrapePage(): Promise<PageContent> {
   return {content: response[0].result, url: tab.url};
 }
 
-export async function getEmbeddings(pageInfo: PageContent): Promise<EmbeddingResult[]> {
+export function cleanUpHTML(bodyString: string): string {
+  const doc = (new DOMParser).parseFromString(bodyString, 'text/html');
+  const reader = new Readability(doc);
+  const readabilityResult = reader.parse()!;
+  const cleanedDocument = (new DOMParser).parseFromString(readabilityResult.content, 'text/html');
+  for (const aEl of [...cleanedDocument.querySelectorAll('img, video, object')]) {
+    aEl.remove();
+  }
+  return convert(cleanedDocument.querySelector('body')!.innerHTML, {
+    selectors: [
+      {selector: 'table', format: 'dataTable'},
+      {selector: 'a', options: { ignoreHref: true } },
+      {selector: 'img', format: 'skip'},
+    ],
+  })
+}
+
+export async function getEmbeddings(input: string): Promise<EmbeddingResult[]> {
   if (SKIP_API_CALL) return [];
-  const body = await fetchApi<ProcessRequestBody, ProcessResponseBody>('process', pageInfo);
+  const body = await fetchApi<ProcessRequestBody, ProcessResponseBody>('process', {content: input});
   usedCost.update((previous) => previous + body.cost);
   updateUsedCost(body.cost)
   return body.embeddings;

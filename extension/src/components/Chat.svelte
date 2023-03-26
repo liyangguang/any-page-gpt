@@ -1,6 +1,6 @@
 <script lang="ts">
   import { tick } from 'svelte';
-  import {getAnswer, scrapePage, getEmbeddings} from '@/shared/utils';
+  import {getAnswer, scrapePage, getEmbeddings, cleanUpHTML} from '@/shared/utils';
   import type {EmbeddingResult} from '$be/types';
   import WaitingDot from '@/components/WaitingDot.svelte';
 
@@ -29,7 +29,8 @@
     try {
       const pageInfo = await scrapePage();
       _updateLatestConversationBotMessage('One sec, let me read the page...');
-      return await getEmbeddings(pageInfo);
+      const cleanedContent = cleanUpHTML(pageInfo.content);
+      return await getEmbeddings(cleanedContent);
     } catch (e) {
       console.error(e);
       _updateLatestConversationBotMessage(`Hmm... I couldn't read the page. ${e?.message}`);
@@ -41,7 +42,7 @@
     query = query || overwriteQuery;
     if (!query) return;
 
-    conversations = [...conversations, {user: query, bot: ''}];    
+    conversations = [...conversations, {user: query, bot: ''}];
     await tick();
     _scrollToBottom();
 

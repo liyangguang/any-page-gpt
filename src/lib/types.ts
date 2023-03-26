@@ -5,16 +5,13 @@ export interface EmbeddingResult {
   content: string;
 }
 
-export interface PageContent {
-  content: string;
-  url: string;
-}
-
 interface RequestBodyBase {
   apiKey: string;
 }
 
-export interface ProcessRequestBody extends RequestBodyBase, PageContent {}
+export interface ProcessRequestBody extends RequestBodyBase {
+  content: string;
+}
 
 export interface ReplyRequestBody extends RequestBodyBase {
   embeddings: EmbeddingResult[];

@@ -4,6 +4,7 @@ const EMBEDDING_CHUNK_TOKEN_SIZE = 200;
 
 export function chunkContent(input: string): string[] {
   const sentences = input.split('\n').map(segmentContent).flat().map((s) => s.trim()).filter(String);
+  console.log(sentences);
   return combinePartsIntoMaxSize(sentences);
 }
 
